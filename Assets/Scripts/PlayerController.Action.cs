@@ -1,11 +1,13 @@
 using UnityEngine;
 
 public partial class PlayerController
-{ 
+{
     private static readonly int WalkAnimationId = Animator.StringToHash("Walk");
     private static readonly int JumpAnimationId = Animator.StringToHash("Jump");
+    private static readonly int FallAnimationId = Animator.StringToHash("Fall");
+    private static readonly int RollAnimationId = Animator.StringToHash("Roll");
     private static readonly int VerticalVelocity = Animator.StringToHash("VerticalVelocity");
-        
+
     private void ActivateJumpAnimation()
     {
         _animator.SetBool(JumpAnimationId, true);
@@ -14,11 +16,13 @@ public partial class PlayerController
     private void StartJump()
     {
         isJumpPressed = true;
+        isJumping = true;
     }
 
     private void EndJump()
     {
         isJumpPressed = false;
+        isJumping = false;
     }
 
     private void StopJumpAnimation()
@@ -39,5 +43,30 @@ public partial class PlayerController
     private void StopWalkAnimation()
     {
         _animator.SetBool(WalkAnimationId, false);
+    }
+
+    private void ActivateFallAnimation()
+    {
+        _animator.SetBool(FallAnimationId, true);
+    }
+
+    private void StopFallAnimation()
+    {
+        _animator.SetBool(FallAnimationId, false);
+    }
+
+    private void ActivateRollAnimation()
+    {
+        _animator.SetTrigger(RollAnimationId);
+    }
+
+    private void StartFall()
+    {
+        isFalling = true;
+    }
+
+    private void EndFall()
+    {
+        isFalling = false;
     }
 }

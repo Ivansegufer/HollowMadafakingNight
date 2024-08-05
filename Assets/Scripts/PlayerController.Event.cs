@@ -14,6 +14,20 @@ public partial class PlayerController
         else StopWalkAnimation();
     }
 
+    public void OnRoll()
+    {
+        if (inGround && canDash)
+        {
+            ActivateRollAnimation();
+            Dash();
+        }
+    }
+
+    public void OnEndRoll()
+    {
+        EndDash();
+    }
+
     public void OnJump()
     {
         StartJump();
@@ -22,6 +36,6 @@ public partial class PlayerController
 
     public void OnJumpRelease()
     {
-        EndJump();
+        isJumpPressed = false;
     }
 }
