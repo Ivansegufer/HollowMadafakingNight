@@ -13,5 +13,10 @@ public partial class PlayerController
         EndFall();
         StopJumpAnimation();
         StopFallAnimation();
+
+        if (isWalkPressed)
+        {
+            ActivateWalkAnimation();
+        }
     }
 }

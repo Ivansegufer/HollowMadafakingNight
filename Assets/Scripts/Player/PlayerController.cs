@@ -1,26 +1,25 @@
 using System.Collections;
-using UnityEngine;
 using Cinemachine;
+using UnityEngine;
 
 public partial class PlayerController : MonoBehaviour
 {
-    [Header("Parameters")]
-    public float movementSpeed;
+    [Header("Parameters")] public float movementSpeed;
     public float dashNoMovementSpeed;
     public float dashSpeed;
     public float jumpForce;
 
-    [Header("Colliders")]
-    public LayerMask ground;
+    [Header("Colliders")] public LayerMask ground;
     public Vector2 down;
     public float colliderRadius;
 
-    [Header("Flags")]
-    public bool canDash = true;
+    [Header("Flags")] public bool canDash = true;
     public bool canMove = true;
     public bool inGround = true;
     public bool isJumping = false;
     public bool isFalling = false;
+    public bool isAttacking = false;
+    public bool isWalkPressed = false;
     public bool isJumpPressed = false;
     public bool isCameraShaking = false;
 
@@ -65,7 +64,7 @@ public partial class PlayerController : MonoBehaviour
     private void Walk()
     {
         if (!canMove) return;
-        
+
         RotatePlayer();
         _rb.velocity = new Vector2(_movementDirection.x * movementSpeed, _rb.velocity.y);
     }
@@ -81,20 +80,22 @@ public partial class PlayerController : MonoBehaviour
 
         var isMoving = CheckMovement();
 
-        var dashSpeed = isMoving ? this.dashSpeed : dashNoMovementSpeed;
+        var speed = isMoving ? dashSpeed : dashNoMovementSpeed;
 
         if (transform.localScale.x > 0)
         {
-            _rb.AddForce(Vector2.right * dashSpeed, ForceMode2D.Impulse);
-        } else
+            _rb.AddForce(Vector2.right * speed, ForceMode2D.Impulse);
+        }
+        else
         {
-            _rb.AddForce(-Vector2.right * dashSpeed, ForceMode2D.Impulse);
+            _rb.AddForce(-Vector2.right * speed, ForceMode2D.Impulse);
         }
     }
 
     private IEnumerator ShakeCamera()
     {
-        var cinemachineBasicMultiChannelPerlin = _virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+        var cinemachineBasicMultiChannelPerlin =
+            _virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
         isCameraShaking = true;
         cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = 3;
         cinemachineBasicMultiChannelPerlin.m_FrequencyGain = 3;
@@ -108,6 +109,19 @@ public partial class PlayerController : MonoBehaviour
     {
         canDash = true;
         canMove = true;
+    }
+
+    private void EndAttack()
+    {
+        isAttacking = false;
+        canMove = true;
+        canDash = true;
+        StopAttackAnimation();
+
+        if (isWalkPressed)
+        {
+            ActivateWalkAnimation();
+        }
     }
 
     private void RotatePlayer()
@@ -136,11 +150,11 @@ public partial class PlayerController : MonoBehaviour
                 break;
         }
     }
-    
+
     private void Jump()
     {
         if (!inGround || !isJumpPressed) return;
-        
+
         _rb.velocity = new Vector2(_rb.velocity.x, 0);
         _rb.velocity += Vector2.up * jumpForce;
     }
@@ -156,5 +170,10 @@ public partial class PlayerController : MonoBehaviour
     private void ResetMovement()
     {
         _rb.velocity = Vector2.zero;
+    }
+
+    private void ResetHorizontalMovement()
+    {
+        _rb.velocity = new Vector2(0, _rb.velocity.y);
     }
 }

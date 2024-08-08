@@ -10,17 +10,18 @@ public partial class PlayerController
 
         var isMoving = CheckMovement();
 
-        if (isMoving && inGround) ActivateWalkAnimation();
+        isWalkPressed = isMoving;
+
+        if (isMoving && inGround && canMove) ActivateWalkAnimation();
         else StopWalkAnimation();
     }
 
     public void OnRoll()
     {
-        if (inGround && canDash)
-        {
-            ActivateRollAnimation();
-            Dash();
-        }
+        if (!inGround || !canDash) return;
+        
+        ActivateRollAnimation();
+        Dash();
     }
 
     public void OnEndRoll()
@@ -37,5 +38,16 @@ public partial class PlayerController
     public void OnJumpRelease()
     {
         isJumpPressed = false;
+    }
+
+    public void OnAttack()
+    {
+        StartAttack();
+        ActivateAttackAnimation();
+    }
+
+    public void OnEndAttack()
+    {
+        EndAttack();
     }
 }

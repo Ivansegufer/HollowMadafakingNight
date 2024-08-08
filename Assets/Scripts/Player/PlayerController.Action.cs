@@ -2,11 +2,44 @@ using UnityEngine;
 
 public partial class PlayerController
 {
+    private static readonly int AttackAnimationId = Animator.StringToHash("Attack");
     private static readonly int WalkAnimationId = Animator.StringToHash("Walk");
     private static readonly int JumpAnimationId = Animator.StringToHash("Jump");
     private static readonly int FallAnimationId = Animator.StringToHash("Fall");
     private static readonly int RollAnimationId = Animator.StringToHash("Roll");
+    
     private static readonly int VerticalVelocity = Animator.StringToHash("VerticalVelocity");
+    private static readonly int AttackX = Animator.StringToHash("AttackX");
+    private static readonly int AttackY = Animator.StringToHash("AttackY");
+
+    private void StartAttack()
+    {
+        isAttacking = true;
+        canMove = false;
+        canDash = false;
+        
+        _animator.SetFloat(AttackX, _movementDirection.x);
+        _animator.SetFloat(AttackY, _movementDirection.y);
+        
+        StopWalkAnimation();
+        StopJumpAnimation();
+        StopFallAnimation();
+
+        if (inGround)
+        {
+            ResetHorizontalMovement();
+        }
+    }
+
+    private void ActivateAttackAnimation()
+    {
+        _animator.SetBool(AttackAnimationId, true);
+    }
+
+    private void StopAttackAnimation()
+    {
+        _animator.SetBool(AttackAnimationId, false);
+    }
 
     private void ActivateJumpAnimation()
     {
